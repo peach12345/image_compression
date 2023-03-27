@@ -17,6 +17,9 @@ import (
 func main() {
 
 	fmt.Println("---Programm is up and running!!---")
+
+	//TODO get filename from user input
+
 	//Get image max size from user input
 	w, h := getWidthAndHeightFromUserInput()
 	//Call read image method
@@ -61,7 +64,7 @@ func getWidthAndHeightFromUserInput() (int, int) {
 	return w, h
 }
 
-// read image from file
+// read image and image config from file in asset folder
 func readImageFromFile(path string) (image.Image, image.Config) {
 
 	f, err := os.Open(path)
@@ -91,8 +94,8 @@ func readImageFromFile(path string) (image.Image, image.Config) {
 	return image, imageConfig
 }
 
-//Shrink image method
-
+// Shrink image method
+// resize image to a given width and high
 func shrinkImage(imageToShrink image.Image, width int, height int) image.Image {
 
 	image := resize.Resize(uint(width), uint(height), imageToShrink, resize.MitchellNetravali)
@@ -109,5 +112,4 @@ func writeImage(imageToWrite image.Image) {
 	if err = jpeg.Encode(f, imageToWrite, nil); err != nil {
 		log.Printf("failed to encode: %v", err)
 	}
-
 }
