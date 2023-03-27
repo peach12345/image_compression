@@ -16,6 +16,7 @@ import (
 
 func main() {
 
+	fmt.Println("---Programm is up and running!!---")
 	//Get image max size from user input
 	w, h := getWidthAndHeightFromUserInput()
 	//Call read image method
