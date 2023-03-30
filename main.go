@@ -14,29 +14,33 @@ import (
 	"github.com/nfnt/resize"
 )
 
-func main() {
+type MyImage struct {
+	width  int
+	height int
+}
 
+func main() {
 	fmt.Println("---Programm is up and running!!---")
 
 	//TODO get filename from user input
 
 	//Get image max size from user input
-	w, h := getWidthAndHeightFromUserInput()
+	var myImage = getWidthAndHeightFromUserInput()
 	//Call read image method
 
 	imageToShrink, imageConfig := readImageFromFile("/Users/danielweyck/Documents/image_compression/asset/test2.jpg")
 
 	fmt.Println("------")
 	fmt.Println("The actual image size: ", imageConfig.Width, "x", imageConfig.Height)
-	fmt.Println("Will be converted to:", w, "x", h)
+	fmt.Println("Will be converted to:", myImage.width, "x", myImage.height)
 
-	imageToShrink = shrinkImage(imageToShrink, w, h)
+	imageToShrink = shrinkImage(imageToShrink, myImage.width, myImage.height)
 
 	writeImage(imageToShrink)
 	fmt.Println("Successfully resized all images")
 }
 
-func getWidthAndHeightFromUserInput() (int, int) {
+func getWidthAndHeightFromUserInput() MyImage {
 	fmt.Println("Select max width")
 
 	reader := bufio.NewReader(os.Stdin)
@@ -61,7 +65,10 @@ func getWidthAndHeightFromUserInput() (int, int) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	return w, h
+	var myImage MyImage
+	myImage.height = h
+	myImage.width = w
+	return myImage
 }
 
 // read image and image config from file in asset folder
