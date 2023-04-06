@@ -7,6 +7,7 @@ import (
 	"image/jpeg"
 	_ "image/png"
 	"log"
+	imageModels "myapp/models"
 	"os"
 	"strconv"
 	"strings"
@@ -32,8 +33,16 @@ func main() {
 	//Else single file will be resized
 
 	//Get image max size from user input
-	var myImage = getWidthAndHeightFromUserInput()
+	w, h := getWidthAndHeightFromUserInput()
 
+	var myImage = imageModels.MyImage{Width: w, Height: h, PictureName: "test"}
+
+	var myImages imageModels.ImagesToShrink
+	myImages.AllImages = append(myImages.AllImages, myImage)
+	fmt.Println(myImages)
+	myImage.ShowDetails()
+
+	myImages.HighResolution()
 	//Call read image method
 
 	for i := 0; i < len(filesPaths); i++ {
@@ -196,13 +205,4 @@ func writeImage(imageToWrite image.Image, index int) {
 	if err = jpeg.Encode(f, imageToWrite, nil); err != nil {
 		log.Printf("failed to encode: %v", err)
 	}
-}
-
-// Udemy
-func DeleteFromSlice(a []string, i int) []string {
-
-	a[i] = a[len(a)-1]
-	a[len(a)-1] = ""
-	a = a[:len(a)-1]
-	return a
 }
