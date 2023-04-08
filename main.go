@@ -20,24 +20,103 @@ type MyImage struct {
 }
 
 func main() {
+
 	fmt.Println("---Programm is up and running!!---")
 
-	//TODO get filename from user input
+	//Ask to read a single file or multiple files
+	filesPaths := chooseBetweenDirectoryOrSingleFiles()
+	fmt.Println(filesPaths)
+
+	//If directory, then all pictures should be resized
+
+	//Else single file will be resized
 
 	//Get image max size from user input
 	var myImage = getWidthAndHeightFromUserInput()
+
 	//Call read image method
 
-	imageToShrink, imageConfig := readImageFromFile("/Users/danielweyck/Documents/image_compression/asset/test2.jpg")
+	for i := 0; i < len(filesPaths); i++ {
+		imageToShrink, imageConfig := readImageFromFile(filesPaths[i])
 
-	fmt.Println("------")
-	fmt.Println("The actual image size: ", imageConfig.Width, "x", imageConfig.Height)
-	fmt.Println("Will be converted to:", myImage.width, "x", myImage.height)
+		fmt.Println("------")
+		fmt.Println("The actual image size: ", imageConfig.Width, "x", imageConfig.Height)
+		fmt.Println("Will be converted to:", myImage.width, "x", myImage.height)
 
-	imageToShrink = shrinkImage(imageToShrink, myImage.width, myImage.height)
+		imageToShrink = shrinkImage(imageToShrink, myImage.width, myImage.height)
 
-	writeImage(imageToShrink)
-	fmt.Println("Successfully resized all images")
+		writeImage(imageToShrink, i)
+		fmt.Println("Successfully resized all image")
+	}
+
+}
+
+func readSingleFile() []string {
+	var result []string
+	reader := bufio.NewReader(os.Stdin)
+
+	fmt.Print("-> ")
+	input, _ := reader.ReadString('\n')
+
+	input = strings.Replace(input, "\n", "", -1)
+	result = append(result, input)
+	return result
+}
+
+func readFilesFromUserInput() []string {
+
+	var pathArray []string
+
+	for {
+		fmt.Println("Enter path of the picutre! Finished press q")
+
+		reader := bufio.NewReader(os.Stdin)
+
+		fmt.Print("-> ")
+		input, _ := reader.ReadString('\n')
+
+		input = strings.Replace(input, "\n", "", -1)
+
+		if input == "q" {
+			break
+		}
+
+		pathArray = append(pathArray, input)
+	}
+
+	return pathArray
+}
+func chooseBetweenDirectoryOrSingleFiles() []string {
+	fmt.Println("Press 1 for single file or 2 for enter multiple files!")
+
+	reader := bufio.NewReader(os.Stdin)
+
+	fmt.Print("-> ")
+	input, _ := reader.ReadString('\n')
+
+	input = strings.Replace(input, "\n", "", -1)
+
+	switch input {
+
+	case "1":
+		return readSingleFile()
+	case "2":
+		return readFilesFromUserInput()
+
+	}
+	var emptyArray []string
+	return emptyArray
+}
+
+func getFilenameFromUserInput() string {
+	fmt.Println("Enter filename")
+
+	reader := bufio.NewReader(os.Stdin)
+
+	fmt.Print("-> ")
+	filename, _ := reader.ReadString('\n')
+
+	return filename
 }
 
 func getWidthAndHeightFromUserInput() MyImage {
@@ -65,9 +144,7 @@ func getWidthAndHeightFromUserInput() MyImage {
 	if err != nil {
 		log.Fatal(err)
 	}
-	var myImage MyImage
-	myImage.height = h
-	myImage.width = w
+	var myImage = MyImage{height: h, width: w}
 	return myImage
 }
 
@@ -110,8 +187,8 @@ func shrinkImage(imageToShrink image.Image, width int, height int) image.Image {
 	return image
 }
 
-func writeImage(imageToWrite image.Image) {
-	f, err := os.Create("resized.jpg")
+func writeImage(imageToWrite image.Image, index int) {
+	f, err := os.Create("resized" + strconv.Itoa(index) + ".png")
 	if err != nil {
 		panic(err)
 	}
@@ -119,4 +196,13 @@ func writeImage(imageToWrite image.Image) {
 	if err = jpeg.Encode(f, imageToWrite, nil); err != nil {
 		log.Printf("failed to encode: %v", err)
 	}
+}
+
+// Udemy
+func DeleteFromSlice(a []string, i int) []string {
+
+	a[i] = a[len(a)-1]
+	a[len(a)-1] = ""
+	a = a[:len(a)-1]
+	return a
 }
