@@ -33,7 +33,8 @@ func main() {
 	//Else single file will be resized
 
 	//Get image max size from user input
-	w, h := getWidthAndHeightFromUserInput()
+	w := 1920
+	h := 1080
 
 	var myImage = imageModels.MyImage{Width: w, Height: h, PictureName: "test"}
 
@@ -50,9 +51,9 @@ func main() {
 
 		fmt.Println("------")
 		fmt.Println("The actual image size: ", imageConfig.Width, "x", imageConfig.Height)
-		fmt.Println("Will be converted to:", myImage.width, "x", myImage.height)
+		fmt.Println("Will be converted to:", myImage.Width, "x", myImage.Height)
 
-		imageToShrink = shrinkImage(imageToShrink, myImage.width, myImage.height)
+		imageToShrink = shrinkImage(imageToShrink, myImage.Width, myImage.Height)
 
 		writeImage(imageToShrink, i)
 		fmt.Println("Successfully resized all image")
